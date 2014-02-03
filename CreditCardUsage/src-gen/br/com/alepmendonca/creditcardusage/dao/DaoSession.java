@@ -9,10 +9,10 @@ import de.greenrobot.dao.AbstractDaoSession;
 import de.greenrobot.dao.identityscope.IdentityScopeType;
 import de.greenrobot.dao.internal.DaoConfig;
 
-import br.com.alepmendonca.creditcardusage.StoreType;
-import br.com.alepmendonca.creditcardusage.Store;
-import br.com.alepmendonca.creditcardusage.CreditCard;
-import br.com.alepmendonca.creditcardusage.CardReceipt;
+import br.com.alepmendonca.creditcardusage.model.StoreType;
+import br.com.alepmendonca.creditcardusage.model.Store;
+import br.com.alepmendonca.creditcardusage.model.CreditCard;
+import br.com.alepmendonca.creditcardusage.model.CardReceipt;
 
 import br.com.alepmendonca.creditcardusage.dao.StoreTypeDao;
 import br.com.alepmendonca.creditcardusage.dao.StoreDao;

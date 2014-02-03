@@ -15,13 +15,13 @@ import javax.mail.MessagingException;
 import javax.mail.Multipart;
 
 import android.content.Context;
-import br.com.alepmendonca.creditcardusage.CardReceipt;
-import br.com.alepmendonca.creditcardusage.CreditCard;
-import br.com.alepmendonca.creditcardusage.Store;
 import br.com.alepmendonca.creditcardusage.dao.CreditCardDao;
 import br.com.alepmendonca.creditcardusage.dao.StoreDao;
 import br.com.alepmendonca.creditcardusage.dao.CreditCardDao.Properties;
 import br.com.alepmendonca.creditcardusage.dao.DaoSession;
+import br.com.alepmendonca.creditcardusage.model.CardReceipt;
+import br.com.alepmendonca.creditcardusage.model.CreditCard;
+import br.com.alepmendonca.creditcardusage.model.Store;
 
 import com.honorables.beckfowler.CreditCardUsageApplication;
 import com.itextpdf.text.pdf.PdfReader;
