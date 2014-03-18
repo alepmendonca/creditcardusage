@@ -19,6 +19,7 @@ import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
 import de.greenrobot.daogenerator.Property;
 import de.greenrobot.daogenerator.Schema;
+import de.greenrobot.daogenerator.ToMany;
 
 /**
  * Mainly copied from DaoExampleDaoGenerator, from greendao project.
@@ -29,7 +30,7 @@ import de.greenrobot.daogenerator.Schema;
  */
 public class CreditCardUsageDaoGenerator {
 
-	private static Entity storeType, store, cc;
+	private static Entity storeType, store, cc, cardReceipt;
 
     public static void main(String[] args) throws Exception {
         Schema schema = new Schema(1, "br.com.alepmendonca.creditcardusage.model");
@@ -42,6 +43,7 @@ public class CreditCardUsageDaoGenerator {
         addStore(schema);
         addCreditCard(schema);
         addCardReceipt(schema);
+        addCardExtract(schema);
 
         new DaoGenerator().generateAll(schema, "../../CreditCardUsage/CreditCardUsage/src-gen", "../../CreditCardUsage/CreditCardUsageTest/src-gen");
     }
@@ -71,7 +73,7 @@ public class CreditCardUsageDaoGenerator {
         cc.addStringProperty("owner");
     }
     private static void addCardReceipt(Schema schema) {
-    	Entity cardReceipt = schema.addEntity("CardReceipt");
+    	cardReceipt = schema.addEntity("CardReceipt");
     	cardReceipt.addIdProperty();
     	Property cardId = cardReceipt.addLongProperty("creditCardId").notNull().getProperty();
     	cardReceipt.addToOne(cc, cardId);
@@ -82,4 +84,21 @@ public class CreditCardUsageDaoGenerator {
     	cardReceipt.addLongProperty("transaction").notNull();
     	cardReceipt.addDateProperty("authorizationDate").notNull();
     }
+    private static void addCardExtract(Schema schema) {
+    	Entity cardExtract = schema.addEntity("CardExtract");
+    	cardExtract.addIdProperty();
+    	Property cardId = cardExtract.addLongProperty("creditCardId").notNull().getProperty();
+    	cardExtract.addToOne(cc, cardId);
+    	cardExtract.addDateProperty("ExtractMonth").notNull();
+    	
+    	Entity cardExtractToReceipts = schema.addEntity("CardExtractToReceipts");
+    	Property extractId = cardExtractToReceipts.addLongProperty("extractId").notNull().getProperty();
+    	cardExtractToReceipts.addToOne(cardExtract, extractId);
+    	Property receiptId = cardExtractToReceipts.addLongProperty("receiptId").notNull().getProperty();
+    	cardExtractToReceipts.addToOne(cardReceipt, receiptId);
+    	ToMany extractToReceipts = cardExtract.addToMany(cardExtractToReceipts, extractId);
+    	extractToReceipts.setName("receiptsNM");
+    	
+    }
+
 }

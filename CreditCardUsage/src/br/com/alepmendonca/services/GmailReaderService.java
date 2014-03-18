@@ -2,6 +2,7 @@ package br.com.alepmendonca.services;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Properties;
 
 import javax.mail.MessagingException;
@@ -13,6 +14,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.IBinder;
 import br.com.alepmendonca.mail.bradesco.BradescoMailExtractStrategy;
+import br.com.alepmendonca.notification.CreditCardUsageNotificationFactory;
 import br.com.alepmendonca.properties.BradescoMailProperties;
 
 public class GmailReaderService extends IntentService {
@@ -42,7 +44,8 @@ public class GmailReaderService extends IntentService {
         	System.out.println(store);
 
         	BradescoMailExtractStrategy strategy = new BradescoMailExtractStrategy(store, this);
-        	strategy.extractMessages();
+        	List<Object> messages = strategy.extractMessages();
+        	CreditCardUsageNotificationFactory.createNotifications(messages, this);
         } catch (NoSuchProviderException e) {
         	e.printStackTrace();
         	System.exit(1);

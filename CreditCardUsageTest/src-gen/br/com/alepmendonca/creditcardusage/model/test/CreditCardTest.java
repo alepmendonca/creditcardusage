@@ -1,9 +1,8 @@
 package br.com.alepmendonca.creditcardusage.model.test;
 
-import de.greenrobot.dao.test.AbstractDaoTestLongPk;
-
-import br.com.alepmendonca.creditcardusage.model.CreditCard;
 import br.com.alepmendonca.creditcardusage.dao.CreditCardDao;
+import br.com.alepmendonca.creditcardusage.model.CreditCard;
+import de.greenrobot.dao.test.AbstractDaoTestLongPk;
 
 public class CreditCardTest extends AbstractDaoTestLongPk<CreditCardDao, CreditCard> {
 
@@ -13,9 +12,7 @@ public class CreditCardTest extends AbstractDaoTestLongPk<CreditCardDao, CreditC
 
     @Override
     protected CreditCard createEntity(Long key) {
-        CreditCard entity = new CreditCard();
-        entity.setId(key);
-        entity.setFinalNumbers();
+    	CreditCard entity = new CreditCard(1L, 7010, "VISA", "John Doe");
         return entity;
     }
 

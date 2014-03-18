@@ -276,6 +276,10 @@ public final class GmailContract {
         	return Uri.parse(BASE_URI_STRING + "/" + account + LABEL_PARAM + "/" + labelId);
         }
 
+        public static int getInboxLabelId() {
+        	return -1;
+        }
+
         private Labels() {}
     }
 }

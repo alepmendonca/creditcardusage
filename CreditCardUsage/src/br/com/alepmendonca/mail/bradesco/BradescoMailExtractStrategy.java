@@ -37,7 +37,7 @@ public class BradescoMailExtractStrategy {
 	}
 
 	protected String getPdfPassword() {
-		return "didamendes";
+		return BradescoMailProperties.getBradescoPdfPassword(context);
 	}
 
 	public List<Object> extractMessages() throws IOException, MessagingException, ParseException {

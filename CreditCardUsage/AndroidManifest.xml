@@ -43,6 +43,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.honorables.beckfowler.MainActivity" />
         </activity>
+        <activity
+            android:name="com.honorables.beckfowler.CardReceiptActivity"
+            android:label="@string/title_activity_card_receipt"
+            android:parentActivityName="com.honorables.beckfowler.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.honorables.beckfowler.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
