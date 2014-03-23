@@ -230,15 +230,14 @@ public class CardReceipt {
     @Override
 	public String toString() {
     	NumberFormat.getCurrencyInstance().setCurrency(getMoeda());
-		return "Cartão final " + getCreditCard() + "\nEstabelecimento: " + getStore() + 
+		return "Cartï¿½o final " + getCreditCard() + "\nEstabelecimento: " + getStore() + 
 				"\nValor: " + NumberFormat.getCurrencyInstance().format(getValue()) + 
 				"\nData e Hora: " + DateFormat.getDateTimeInstance().format(getAuthorizationDate().getTime()) +
-				"\nNúmero Autenticação: " + getTransaction();
+				"\nNï¿½mero Autenticaï¿½ï¿½o: " + getTransaction();
 	}
     
     public static class CardReceiptComparator implements Comparator<CardReceipt> {
 
-		@Override
 		public int compare(CardReceipt arg0, CardReceipt arg1) {
 			int sameCards = arg0.getCreditCard().getFinalNumbers() - arg1.getCreditCard().getFinalNumbers();
 			if (sameCards == 0) {
