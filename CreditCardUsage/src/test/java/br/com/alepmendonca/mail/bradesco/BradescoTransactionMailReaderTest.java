@@ -26,6 +26,8 @@ import org.robolectric.RobolectricTestRunner;
 
 import br.com.alepmendonca.creditcardusage.dao.DaoSession;
 import br.com.alepmendonca.creditcardusage.model.CardReceipt;
+import br.com.alepmendonca.creditcardusage.model.CreditCard;
+import br.com.alepmendonca.creditcardusage.model.Store;
 import br.com.alepmendonca.properties.BradescoMailProperties;
 
 import com.honorables.beckfowler.CreditCardUsageApplication;
@@ -46,7 +48,7 @@ public class BradescoTransactionMailReaderTest {
 		reader = new BradescoTransactionMailReader(str);
 	}
 
-	public Multipart createMessage(String fileName) throws MessagingException, IOException {
+	public static Multipart createMessage(String fileName) throws MessagingException, IOException {
 		InputStream mailFileInputStream = new FileInputStream(fileName);
 		Properties props = new Properties();
 		Session session = Session.getDefaultInstance(props, null);
@@ -65,8 +67,15 @@ public class BradescoTransactionMailReaderTest {
 		assertFalse(reader.canExtract(message));
 	}
 
+	@Test(expected=UnsupportedOperationException.class)
+	public void extractMessage_tryToExtractBillMail() throws MessagingException, IOException, ParseException {
+		Multipart message = createMessage("src/test/resources/mailBill1.msg");
+		InputStream pdf = new FileInputStream("src/test/resources/bill1.pdf");
+		reader.extractMessage(message, pdf);
+	}
+
 	@Test
-	public void extractMessage() throws MessagingException, IOException, ParseException {
+	public void extractMessageCreateEveryObject() throws MessagingException, IOException, ParseException {
 		Multipart message = createMessage("src/test/resources/mailTransaction1.msg");
 		InputStream pdf = new FileInputStream("src/test/resources/transaction1.pdf");
 		CardReceipt c = reader.extractMessage(message, pdf);
@@ -76,6 +85,51 @@ public class BradescoTransactionMailReaderTest {
 		assertEquals("KTS COMERCIO             SAO PAULO", c.getStore().getOriginalName());
 		assertEquals(new Date(2014 - 1900, 2, 21, 20, 27, 49), c.getAuthorizationDate());
 		assertEquals(674965L, c.getTransaction());
+	}
+
+	@Test
+	public void extractMessageDontCreateCreditCard() throws MessagingException, IOException, ParseException {
+		DaoSession dao = ((CreditCardUsageApplication) Robolectric.application).getDAO();
+		CreditCard cc = new CreditCard(null, 6372, "VISA", "Test User");
+		long ccid = dao.getCreditCardDao().insert(cc);
+
+		Multipart message = createMessage("src/test/resources/mailTransaction1.msg");
+		InputStream pdf = new FileInputStream("src/test/resources/transaction1.pdf");
+		CardReceipt c = reader.extractMessage(message, pdf);
+		assertEquals(6372, c.getCreditCard().getFinalNumbers());
+		assertEquals(ccid, c.getCreditCardId());
+	}
+
+	@Test
+	public void extractMessageDontCreateStore() throws MessagingException, IOException, ParseException {
+		DaoSession dao = ((CreditCardUsageApplication) Robolectric.application).getDAO();
+		Store s = new Store(null, "KTS COMERCIO             SAO PAULO", "Casa de Tolerancia", null);
+		long sid = dao.getStoreDao().insert(s);
+
+		Multipart message = createMessage("src/test/resources/mailTransaction1.msg");
+		InputStream pdf = new FileInputStream("src/test/resources/transaction1.pdf");
+		CardReceipt c = reader.extractMessage(message, pdf);
+		assertEquals("KTS COMERCIO             SAO PAULO", c.getStore().getOriginalName());
+		assertEquals("Casa de Tolerancia", c.getStore().getUserDefinedName());
+		assertEquals(sid, c.getStoreId());
+	}
+
+	@Test
+	public void extractMessage_2TimesSameMessageCreateOneCardReceipt() throws MessagingException, IOException, ParseException {
+		Multipart message = createMessage("src/test/resources/mailTransaction1.msg");
+		InputStream pdf = new FileInputStream("src/test/resources/transaction1.pdf");
+		CardReceipt c1 = reader.extractMessage(message, pdf);
+		
+		pdf = new FileInputStream("src/test/resources/transaction1.pdf");
+		CardReceipt c2 = reader.extractMessage(message, pdf);
+		
+		assertEquals(c1, c2);
+		assertEquals(65.76d, c2.getValue(), 0.01);
+		assertEquals(Currency.getInstance("BRL"), c2.getMoeda());
+		assertEquals(6372, c2.getCreditCard().getFinalNumbers());
+		assertEquals("KTS COMERCIO             SAO PAULO", c2.getStore().getOriginalName());
+		assertEquals(new Date(2014 - 1900, 2, 21, 20, 27, 49), c2.getAuthorizationDate());
+		assertEquals(674965L, c2.getTransaction());
 	}
 
 }

@@ -61,6 +61,9 @@ public class CardReceiptDao extends AbstractDao<CardReceipt, Long> {
                 "'CURRENCY' TEXT NOT NULL ," + // 4: currency
                 "'TRANSACTION' INTEGER NOT NULL ," + // 5: transaction
                 "'AUTHORIZATION_DATE' INTEGER NOT NULL );"); // 6: authorizationDate
+        // Add Indexes
+        db.execSQL("CREATE UNIQUE INDEX " + constraint + "'IDX_CARD_RECEIPT_CREDIT_CARD_ID_STORE_ID_TRANSACTION' ON 'CARD_RECEIPT'" +
+                " ('CREDIT_CARD_ID','STORE_ID','TRANSACTION');");
     }
 
     /** Drops the underlying database table. */

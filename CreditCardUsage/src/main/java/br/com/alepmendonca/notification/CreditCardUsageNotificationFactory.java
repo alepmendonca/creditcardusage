@@ -8,7 +8,6 @@ import java.util.List;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import br.com.alepmendonca.creditcardusage.model.CardExtract;
@@ -45,9 +44,13 @@ public class CreditCardUsageNotificationFactory {
 			Notification.Builder mBuilder = 
 					new Notification.Builder(context)
 					.setSmallIcon(R.drawable.ic_card_receipt)
-					.setContentText(receiptsFromACC.get(0).getCreditCard().toString());
+					.setContentText(receiptsFromACC.get(0).toString());
 			if (receiptsFromACC.size() < 2) {
 				mBuilder.setContentTitle("Nova compra");
+				if (receiptsFromACC.get(0).getCreditCard().getOwner() == null)
+					mBuilder.addAction(android.R.drawable.btn_dialog, "Config CC", PendingIntent.getActivity(context, 0, new Intent(context, CardReceiptActivity.class), 0));
+				if (receiptsFromACC.get(0).getStore().getUserDefinedName() == null)
+					mBuilder.addAction(android.R.drawable.ic_dialog_alert, "Config Loja", PendingIntent.getActivity(context, 0, new Intent(context, CardReceiptActivity.class), 0));
 			} else {
 				mBuilder.setContentTitle(receiptsFromACC.size() + " novas compras");
 				Notification.InboxStyle inboxStyle = new Notification.InboxStyle();
@@ -56,13 +59,18 @@ public class CreditCardUsageNotificationFactory {
 				}
 				mBuilder.setStyle(inboxStyle);
 			}
+			mBuilder.setAutoCancel(true);
+			mBuilder.setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND);
+			//TODO definir cor das notificacoes
+			//mBuilder.setLights(Notification, LEDON, LEDOFF);
 			displayNotification(mBuilder, cc.getFinalNumbers(), context);
 		}
 
 	}
 
 	private void displayNotification(Notification.Builder mBuilder, int notificationId, Context context) {
-		Intent resultIntent = new Intent(context, CardReceiptActivity.class);
+		//TODO tentar adicionar intent nas notificacoes
+/*		Intent resultIntent = new Intent(context, CardReceiptActivity.class);
 
 		// The stack builder object will contain an artificial back stack for the
 		// started Activity.
@@ -70,6 +78,7 @@ public class CreditCardUsageNotificationFactory {
 		// your application to the Home screen.
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 		// Adds the back stack for the Intent (but not the Intent itself)
+		
 		stackBuilder.addParentStack(CardReceiptActivity.class);
 		// Adds the Intent that starts the Activity to the top of the stack
 		stackBuilder.addNextIntent(resultIntent);
@@ -78,7 +87,7 @@ public class CreditCardUsageNotificationFactory {
 		            0,
 		            PendingIntent.FLAG_UPDATE_CURRENT
 		        );
-		mBuilder.setContentIntent(resultPendingIntent);
+		mBuilder.setContentIntent(resultPendingIntent);*/
 		NotificationManager mNotificationManager =
 			    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		mNotificationManager.notify(notificationId, mBuilder.build());

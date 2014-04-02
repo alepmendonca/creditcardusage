@@ -15,7 +15,6 @@ import javax.mail.MessagingException;
 import javax.mail.Multipart;
 
 import br.com.alepmendonca.creditcardusage.dao.CreditCardDao;
-import br.com.alepmendonca.creditcardusage.dao.CreditCardDao.Properties;
 import br.com.alepmendonca.creditcardusage.dao.DaoSession;
 import br.com.alepmendonca.creditcardusage.dao.StoreDao;
 import br.com.alepmendonca.creditcardusage.model.CardReceipt;
@@ -97,13 +96,13 @@ public class BradescoTransactionMailReader {
 
 			public void run() {
 				CreditCardDao ccDao = daoSession.getCreditCardDao();
-				CreditCard cc = ccDao.queryBuilder().where(Properties.FinalNumbers.eq(finalCartao)).unique();
+				CreditCard cc = ccDao.queryBuilder().where(CreditCardDao.Properties.FinalNumbers.eq(finalCartao)).unique();
 				if (cc == null) {
 					cc = new CreditCard(null, finalCartao, null, null);
 					ccDao.insert(cc);
 				}
 				StoreDao sDao = daoSession.getStoreDao();
-				Store s = sDao.queryBuilder().where(br.com.alepmendonca.creditcardusage.dao.StoreDao.Properties.OriginalName.eq(estabelecimento)).unique();
+				Store s = sDao.queryBuilder().where(StoreDao.Properties.OriginalName.eq(estabelecimento)).unique();
 				if (s == null) {
 					s = new Store(null, estabelecimento, null, null);
 					sDao.insert(s);

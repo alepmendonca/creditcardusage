@@ -16,6 +16,7 @@ import br.com.alepmendonca.creditcardusage.dao.StoreTypeDao;
 public class StoreType {
 
     private Long id;
+    /** Not-null value. */
     private String name;
     private Long parentTypeId;
 
@@ -60,10 +61,12 @@ public class StoreType {
         this.id = id;
     }
 
+    /** Not-null value. */
     public String getName() {
         return name;
     }
 
+    /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setName(String name) {
         this.name = name;
     }
@@ -148,6 +151,10 @@ public class StoreType {
     }
 
     // KEEP METHODS - put your custom methods here
+    @Override
+	public String toString() {
+    	return getName();
+    }
     // KEEP METHODS END
 
 }

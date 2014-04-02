@@ -53,8 +53,11 @@ public class StoreTypeDao extends AbstractDao<StoreType, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'STORE_TYPE' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
-                "'NAME' TEXT," + // 1: name
+                "'NAME' TEXT NOT NULL ," + // 1: name
                 "'PARENT_TYPE_ID' INTEGER);"); // 2: parentTypeId
+        // Add Indexes
+        db.execSQL("CREATE INDEX " + constraint + "'IDX_STORE_TYPE_NAME' ON 'STORE_TYPE'" +
+                " ('NAME');");
     }
 
     /** Drops the underlying database table. */
@@ -72,11 +75,7 @@ public class StoreTypeDao extends AbstractDao<StoreType, Long> {
         if (id != null) {
             stmt.bindLong(1, id);
         }
- 
-        String name = entity.getName();
-        if (name != null) {
-            stmt.bindString(2, name);
-        }
+        stmt.bindString(2, entity.getName());
  
         Long parentTypeId = entity.getParentTypeId();
         if (parentTypeId != null) {
@@ -101,7 +100,7 @@ public class StoreTypeDao extends AbstractDao<StoreType, Long> {
     public StoreType readEntity(Cursor cursor, int offset) {
         StoreType entity = new StoreType( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // name
+            cursor.getString(offset + 1), // name
             cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2) // parentTypeId
         );
         return entity;
@@ -111,7 +110,7 @@ public class StoreTypeDao extends AbstractDao<StoreType, Long> {
     @Override
     public void readEntity(Cursor cursor, StoreType entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setName(cursor.getString(offset + 1));
         entity.setParentTypeId(cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2));
      }
     

@@ -38,12 +38,6 @@ public class BradescoMailProperties {
 		return preferences.getInt("gmail_min_time_between_checks_seconds", 10);
 	}
 
-	public void setMinTimeBetweenMailChecks(int time) {
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt("gmail_min_time_between_checks_seconds", time).commit();
-	}
-
 	public int getGmailLabelId() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 		return preferences.getInt("gmail_label_id", GmailContract.Labels.getInboxLabelId());
@@ -79,7 +73,7 @@ public class BradescoMailProperties {
 
 	public String getBradescoPdfPassword() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return preferences.getString("bradesco_pdf_password", null);
+		return preferences.getString("bradesco_pdf_password", "");
 	}
 
 	public void setBradescoPdfPassword(String pass) {

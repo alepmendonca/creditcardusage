@@ -17,6 +17,7 @@ package br.com.alepmendonca.daogenerator;
 
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
+import de.greenrobot.daogenerator.Index;
 import de.greenrobot.daogenerator.Property;
 import de.greenrobot.daogenerator.Schema;
 import de.greenrobot.daogenerator.ToMany;
@@ -44,17 +45,25 @@ public class CreditCardUsageDaoGenerator {
         addCreditCard(schema);
         addCardReceipt(schema);
         addCardExtract(schema);
+        
+        //Not generating tests anymore: recreated tests to use with Robolectric and JUnit 4
+        for (Entity e : schema.getEntities()) {
+        	e.setSkipGenerationTest(true);
+        }
 
-        new DaoGenerator().generateAll(schema, "../../CreditCardUsage/CreditCardUsage/src-gen", "../../CreditCardUsage/CreditCardUsageTest/src-gen");
+        new DaoGenerator().generateAll(schema, "../../CreditCardUsage/CreditCardUsage/src-gen", "../../CreditCardUsage/CreditCardUsage/src-gen-test");
     }
 
     private static void addStoreType(Schema schema) {
         storeType = schema.addEntity("StoreType");
         storeType.addIdProperty();
-        storeType.addStringProperty("name");
+        Property name = storeType.addStringProperty("name").notNull().getProperty();
         Property parent = storeType.addLongProperty("parentTypeId").getProperty();
         storeType.addToOne(storeType, parent, "parentType");
         storeType.addToMany(storeType, parent, "subtypes");
+        Index idx = new Index();
+        idx.addPropertyAsc(name);
+        storeType.addIndex(idx);
     }
 
     private static void addStore(Schema schema) {
@@ -81,16 +90,30 @@ public class CreditCardUsageDaoGenerator {
     	cardReceipt.addToOne(store, storeId);
     	cardReceipt.addDoubleProperty("value").notNull();
     	cardReceipt.addStringProperty("currency").notNull();
-    	cardReceipt.addLongProperty("transaction").notNull();
+    	Property transaction = cardReceipt.addLongProperty("transaction").notNull().getProperty();
     	cardReceipt.addDateProperty("authorizationDate").notNull();
+    	
+    	Index uniqIndex = new Index();
+    	uniqIndex.addProperty(cardId);
+    	uniqIndex.addProperty(storeId);
+    	uniqIndex.addProperty(transaction);
+    	uniqIndex.makeUnique();
+    	cardReceipt.addIndex(uniqIndex);
     }
+   
     private static void addCardExtract(Schema schema) {
     	Entity cardExtract = schema.addEntity("CardExtract");
     	cardExtract.addIdProperty();
     	Property cardId = cardExtract.addLongProperty("creditCardId").notNull().getProperty();
     	cardExtract.addToOne(cc, cardId);
-    	cardExtract.addDateProperty("ExtractMonth").notNull();
-    	
+    	Property month = cardExtract.addDateProperty("ExtractMonth").notNull().getProperty();
+
+    	Index uniqIndex = new Index();
+    	uniqIndex.addProperty(cardId);
+    	uniqIndex.addProperty(month);
+    	uniqIndex.makeUnique();
+    	cardExtract.addIndex(uniqIndex);
+
     	Entity cardExtractToReceipts = schema.addEntity("CardExtractToReceipts");
     	Property extractId = cardExtractToReceipts.addLongProperty("extractId").notNull().getProperty();
     	cardExtractToReceipts.addToOne(cardExtract, extractId);

@@ -11,7 +11,6 @@ import br.com.alepmendonca.creditcardusage.dao.StoreDao;
 
 // KEEP INCLUDES - put your custom includes here
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -230,10 +229,8 @@ public class CardReceipt {
     @Override
 	public String toString() {
     	NumberFormat.getCurrencyInstance().setCurrency(getMoeda());
-		return "Cart�o final " + getCreditCard() + "\nEstabelecimento: " + getStore() + 
-				"\nValor: " + NumberFormat.getCurrencyInstance().format(getValue()) + 
-				"\nData e Hora: " + DateFormat.getDateTimeInstance().format(getAuthorizationDate().getTime()) +
-				"\nN�mero Autentica��o: " + getTransaction();
+		return getStore().toString() + " - " +  
+				NumberFormat.getCurrencyInstance().format(getValue());
 	}
     
     public static class CardReceiptComparator implements Comparator<CardReceipt> {

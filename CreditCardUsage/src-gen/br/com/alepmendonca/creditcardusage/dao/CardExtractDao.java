@@ -52,6 +52,9 @@ public class CardExtractDao extends AbstractDao<CardExtract, Long> {
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'CREDIT_CARD_ID' INTEGER NOT NULL ," + // 1: creditCardId
                 "'EXTRACT_MONTH' INTEGER NOT NULL );"); // 2: ExtractMonth
+        // Add Indexes
+        db.execSQL("CREATE UNIQUE INDEX " + constraint + "'IDX_CARD_EXTRACT_CREDIT_CARD_ID_EXTRACT_MONTH' ON 'CARD_EXTRACT'" +
+                " ('CREDIT_CARD_ID','EXTRACT_MONTH');");
     }
 
     /** Drops the underlying database table. */

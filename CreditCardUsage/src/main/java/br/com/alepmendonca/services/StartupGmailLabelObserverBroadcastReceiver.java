@@ -50,7 +50,7 @@ public class StartupGmailLabelObserverBroadcastReceiver extends BroadcastReceive
 	}
 	
 	private void onAccountResults(Account[] accounts, Context context) {
-        if (accounts != null && accounts.length > 0) { //TODO pegando a primeira conta do gmail disponivel.. deveria perguntar pela conta no preferences
+        if (accounts.length > 0) { //TODO pegando a primeira conta do gmail disponivel.. deveria perguntar pela conta no preferences
             final String account = accounts[0].name;
             BradescoMailProperties p = ((CreditCardUsageApplication) context).getProperties();
             p.setGmailAccount(account);

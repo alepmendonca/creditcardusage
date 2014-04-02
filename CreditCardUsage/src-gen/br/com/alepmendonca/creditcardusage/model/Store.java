@@ -138,6 +138,12 @@ public class Store {
     }
 
     // KEEP METHODS - put your custom methods here
+    @Override
+	public String toString() {
+    	String store = getStoreType() != null ? getStoreType().toString() + " em " : "";
+    	String name = getUserDefinedName() != null ? getUserDefinedName() : getOriginalName();
+    	return store + name;
+    }
     // KEEP METHODS END
 
 }
