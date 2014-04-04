@@ -45,7 +45,7 @@ import com.honorables.beckfowler.CreditCardUsageApplication;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoLog;
 import de.greenrobot.dao.DbUtils;
-import de.greenrobot.dao.InternalUnitTestDaoAccess;
+import de.greenrobot.dao.InternalUnitTestDaoAccessWithSession;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.identityscope.IdentityScope;
 import de.greenrobot.dao.internal.SqlUtils;
@@ -65,7 +65,7 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, Long>, T> {
 	protected final Class<D> daoClass;
 	protected D dao;
 	protected SQLiteDatabase db;
-	protected InternalUnitTestDaoAccess<T, Long> daoAccess;
+	protected InternalUnitTestDaoAccessWithSession<T, Long> daoAccess;
 	protected IdentityScope<Long, T> identityScopeForDao;
 	protected Set<Long> usedPks;
 	protected final Random random;
@@ -94,6 +94,7 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, Long>, T> {
 		DbUtils.logTableDump(db, dao.getTablename());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() throws Exception {
 		try {
@@ -102,7 +103,7 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, Long>, T> {
 			db = application.getOpenHelper().getWritableDatabase();
 			DaoMaster.dropAllTables(db, false);
 			DaoMaster.createAllTables(db, false);
-			daoAccess = new InternalUnitTestDaoAccess<T, Long>(db, (Class<AbstractDao<T, Long>>) daoClass, identityScopeForDao);
+			daoAccess = new InternalUnitTestDaoAccessWithSession(db, daoClass, application.getDAO(), identityScopeForDao);
 			dao = (D) daoAccess.getDao();
 		} catch (Exception e) {
 			throw new RuntimeException("Could not prepare DAO Test", e);
@@ -382,7 +383,7 @@ public abstract class AbstractDaoTest<D extends AbstractDao<T, Long>, T> {
 	protected Cursor queryWithDummyColumnsInFront(int dummyCount, String valueForColumn, Long pk) {
 		StringBuilder builder = new StringBuilder("SELECT ");
 		for (int i = 0; i < dummyCount; i++) {
-			builder.append(valueForColumn).append(",");
+			builder.append(valueForColumn).append(" '" + valueForColumn + i + "'").append(",");
 		}
 		SqlUtils.appendColumns(builder, "T", dao.getAllColumns()).append(" FROM ");
 		builder.append(dao.getTablename()).append(" T");

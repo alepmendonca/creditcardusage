@@ -58,6 +58,7 @@ public class StoreType {
     }
 
     public void setId(Long id) {
+	if (id == null) throw new IllegalArgumentException("Property id cannot be null");
         this.id = id;
     }
 
@@ -68,6 +69,7 @@ public class StoreType {
 
     /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setName(String name) {
+	if (name == null) throw new IllegalArgumentException("Property name cannot be null");
         this.name = name;
     }
 
@@ -76,6 +78,7 @@ public class StoreType {
     }
 
     public void setParentTypeId(Long parentTypeId) {
+	if (parentTypeId == null) throw new IllegalArgumentException("Property parentTypeId cannot be null");
         this.parentTypeId = parentTypeId;
     }
 

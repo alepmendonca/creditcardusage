@@ -54,6 +54,7 @@ public class CardExtractToReceipts {
     }
 
     public void setExtractId(long extractId) {
+	if (extractId == null) throw new IllegalArgumentException("Property extractId cannot be null");
         this.extractId = extractId;
     }
 
@@ -62,6 +63,7 @@ public class CardExtractToReceipts {
     }
 
     public void setReceiptId(long receiptId) {
+	if (receiptId == null) throw new IllegalArgumentException("Property receiptId cannot be null");
         this.receiptId = receiptId;
     }
 

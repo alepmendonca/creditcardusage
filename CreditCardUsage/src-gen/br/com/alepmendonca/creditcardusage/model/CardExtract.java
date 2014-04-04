@@ -61,6 +61,7 @@ public class CardExtract {
     }
 
     public void setId(Long id) {
+	if (id == null) throw new IllegalArgumentException("Property id cannot be null");
         this.id = id;
     }
 
@@ -69,6 +70,7 @@ public class CardExtract {
     }
 
     public void setCreditCardId(long creditCardId) {
+	if (creditCardId == null) throw new IllegalArgumentException("Property creditCardId cannot be null");
         this.creditCardId = creditCardId;
     }
 
@@ -79,6 +81,7 @@ public class CardExtract {
 
     /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setExtractMonth(java.util.Date ExtractMonth) {
+	if (ExtractMonth == null) throw new IllegalArgumentException("Property ExtractMonth cannot be null");
         this.ExtractMonth = ExtractMonth;
     }
 

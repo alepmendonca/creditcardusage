@@ -55,14 +55,15 @@ public class CardReceipt {
         this.id = id;
     }
 
-    public CardReceipt(Long id, long creditCardId, long storeId, double value, String currency, long transaction, java.util.Date authorizationDate) {
-        this.id = id;
-        this.creditCardId = creditCardId;
-        this.storeId = storeId;
-        this.value = value;
-        this.currency = currency;
-        this.transaction = transaction;
-        this.authorizationDate = authorizationDate;
+    /** called by internal mechanisms, do not call yourself. */
+    public CardReceipt(Long id, Long creditCardId, Long storeId, Double value, String currency, Long transaction, java.util.Date authorizationDate) {
+    	this(id);
+    	this.creditCardId = creditCardId;
+    	this.storeId = storeId;
+    	this.value = value;
+    	this.currency = currency;
+    	this.authorizationDate = authorizationDate;
+    	this.transaction = transaction;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -76,6 +77,7 @@ public class CardReceipt {
     }
 
     public void setId(Long id) {
+	if (id == null) throw new IllegalArgumentException("Property id cannot be null");
         this.id = id;
     }
 
@@ -83,42 +85,17 @@ public class CardReceipt {
         return creditCardId;
     }
 
-    public void setCreditCardId(long creditCardId) {
-        this.creditCardId = creditCardId;
-    }
-
     public long getStoreId() {
         return storeId;
-    }
-
-    public void setStoreId(long storeId) {
-        this.storeId = storeId;
     }
 
     public double getValue() {
         return value;
     }
 
-    public void setValue(double value) {
-        this.value = value;
-    }
-
-    /** Not-null value. */
-    public String getCurrency() {
-        return currency;
-    }
-
-    /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
 
     public long getTransaction() {
         return transaction;
-    }
-
-    public void setTransaction(long transaction) {
-        this.transaction = transaction;
     }
 
     /** Not-null value. */
@@ -128,6 +105,7 @@ public class CardReceipt {
 
     /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setAuthorizationDate(java.util.Date authorizationDate) {
+	if (authorizationDate == null) throw new IllegalArgumentException("Property authorizationDate cannot be null");
         this.authorizationDate = authorizationDate;
     }
 
@@ -215,22 +193,54 @@ public class CardReceipt {
 
     public CardReceipt(CreditCard cc, Store s, BigDecimal valor,
 			Currency moeda, Calendar dataHoraAutorizacao, long autenticacao) {
-		this(null, cc.getId(), s.getId(), valor.doubleValue(), 
-				moeda.getCurrencyCode(), autenticacao, dataHoraAutorizacao.getTime());
+		setCreditCard(cc);
+		setStore(s);
+		setTransaction(autenticacao);
+		setValue(valor != null ? valor.doubleValue() : 0);
+		if (moeda != null) setCurrency(moeda);
+		setAuthorizationDate(dataHoraAutorizacao != null ? dataHoraAutorizacao.getTime() : null);
 	}
 
-    public Currency getMoeda() {
-    	if (getCurrency() != null)
-    		return Currency.getInstance(getCurrency());
+    public void setValue(double value) {
+    	if (Double.compare(value, 0d) == 0) throw new IllegalArgumentException("Property value cannot be zero");
+        this.value = value;
+    }
+
+    /** Not-null value. */
+    public Currency getCurrency() {
+    	if (currency != null)
+    		return Currency.getInstance(currency);
     	else
     		return Currency.getInstance(Locale.getDefault());
+    }
+
+    /** Not-null value; ensure this value is available before it is saved to the database. */
+    public void setCurrency(Currency currency) {
+    	if (currency == null) throw new IllegalArgumentException("Property currency cannot be null");
+        this.currency = currency.getCurrencyCode();
+    }
+
+    public void setTransaction(long transaction) {
+    	if (transaction == 0) throw new IllegalArgumentException("Property transaction cannot be zero");
+        this.transaction = transaction;
+    }
+    
+    public void setCreditCardId(long creditCardId) {
+    	if (creditCardId == 0) throw new IllegalArgumentException("Property creditCardId cannot be zero");
+        this.creditCardId = creditCardId;
+    }
+    
+    public void setStoreId(long storeId) {
+    	if (storeId == 0) throw new IllegalArgumentException("Property storeId cannot be zero");
+        this.storeId = storeId;
     }
     
     @Override
 	public String toString() {
-    	NumberFormat.getCurrencyInstance().setCurrency(getMoeda());
-		return getStore().toString() + " - " +  
-				NumberFormat.getCurrencyInstance().format(getValue());
+    	NumberFormat.getCurrencyInstance().setCurrency(getCurrency());
+		return getCreditCard().toString() + " creditado " +
+			NumberFormat.getCurrencyInstance().format(getValue()) + 
+			" em " + getStore().toString();
 	}
     
     public static class CardReceiptComparator implements Comparator<CardReceipt> {
@@ -238,7 +248,12 @@ public class CardReceipt {
 		public int compare(CardReceipt arg0, CardReceipt arg1) {
 			int sameCards = arg0.getCreditCard().getFinalNumbers() - arg1.getCreditCard().getFinalNumbers();
 			if (sameCards == 0) {
-				return arg0.getAuthorizationDate().compareTo(arg1.getAuthorizationDate());
+				int sameStore = arg0.getStore().getOriginalName().compareTo(arg1.getStore().getOriginalName());
+				if (sameStore == 0) {
+					return (int) (arg0.getTransaction() - arg1.getTransaction());
+				} else {
+					return sameStore;
+				}
 			} else {
 				return sameCards;
 			}

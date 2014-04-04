@@ -59,6 +59,7 @@ public class Store {
     }
 
     public void setId(Long id) {
+	if (id == null) throw new IllegalArgumentException("Property id cannot be null");
         this.id = id;
     }
 
@@ -69,6 +70,7 @@ public class Store {
 
     /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setOriginalName(String originalName) {
+	if (originalName == null) throw new IllegalArgumentException("Property originalName cannot be null");
         this.originalName = originalName;
     }
 
@@ -77,6 +79,7 @@ public class Store {
     }
 
     public void setUserDefinedName(String userDefinedName) {
+	if (userDefinedName == null) throw new IllegalArgumentException("Property userDefinedName cannot be null");
         this.userDefinedName = userDefinedName;
     }
 
@@ -85,6 +88,7 @@ public class Store {
     }
 
     public void setStoreTypeId(Long storeTypeId) {
+	if (storeTypeId == null) throw new IllegalArgumentException("Property storeTypeId cannot be null");
         this.storeTypeId = storeTypeId;
     }
 

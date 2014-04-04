@@ -1,5 +1,6 @@
 package br.com.alepmendonca.creditcardusage.dao;
 
+import java.util.Currency;
 import java.util.List;
 import java.util.ArrayList;
 import android.database.Cursor;
@@ -84,7 +85,7 @@ public class CardReceiptDao extends AbstractDao<CardReceipt, Long> {
         stmt.bindLong(2, entity.getCreditCardId());
         stmt.bindLong(3, entity.getStoreId());
         stmt.bindDouble(4, entity.getValue());
-        stmt.bindString(5, entity.getCurrency());
+        stmt.bindString(5, entity.getCurrency().getCurrencyCode());
         stmt.bindLong(6, entity.getTransaction());
         stmt.bindLong(7, entity.getAuthorizationDate().getTime());
     }
@@ -123,7 +124,7 @@ public class CardReceiptDao extends AbstractDao<CardReceipt, Long> {
         entity.setCreditCardId(cursor.getLong(offset + 1));
         entity.setStoreId(cursor.getLong(offset + 2));
         entity.setValue(cursor.getDouble(offset + 3));
-        entity.setCurrency(cursor.getString(offset + 4));
+        entity.setCurrency(Currency.getInstance(cursor.getString(offset + 4)));
         entity.setTransaction(cursor.getLong(offset + 5));
         entity.setAuthorizationDate(new java.util.Date(cursor.getLong(offset + 6)));
      }

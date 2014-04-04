@@ -11,9 +11,7 @@ public class CreditCardTest extends AbstractDaoTest<CreditCardDao, CreditCard> {
 
     @Override
     protected CreditCard createEntity(Long key) {
-        CreditCard entity = new CreditCard();
-        entity.setId(key);
-        entity.setFinalNumbers();
+        CreditCard entity = new CreditCard(key, 1234, null, null);
         return entity;
     }
 
